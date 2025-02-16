@@ -15,6 +15,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@internal/axios": ["libs/axios/src/index.ts"],
       "@internal/database": ["libs/database/src/index.ts"]
     }
   },
