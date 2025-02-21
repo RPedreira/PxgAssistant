@@ -8,10 +8,16 @@ class Pokemon {
     }
 
     static async find(
-        filter: Record<string, unknown>
+        filter: Record<string, unknown>,
+        sortParams:
+            | string
+            | { [key: string]: mongoose.SortOrder | { $meta: unknown } }
+            | [string, mongoose.SortOrder][] = {}
     ): Promise<PokemonInterface[] | null> {
         const PokemonModel = this.getModel()
-        return PokemonModel.find(filter).lean<PokemonInterface[]>()
+        return PokemonModel.find(filter)
+            .sort(sortParams)
+            .lean<PokemonInterface[]>()
     }
 
     static async findOneAndUpdate(
