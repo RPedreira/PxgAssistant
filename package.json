@@ -13,6 +13,8 @@
     "@angular/platform-browser": "~19.1.0",
     "@angular/platform-browser-dynamic": "~19.1.0",
     "@angular/router": "~19.1.0",
+    "dotenv": "^16.4.7",
+    "mongoose": "^8.10.1",
     "rxjs": "~7.8.0",
     "zone.js": "~0.15.0"
   },
@@ -38,6 +40,7 @@
     "@swc/core": "~1.5.7",
     "@swc/helpers": "~0.5.11",
     "@types/jest": "^29.5.12",
+    "@types/mongoose": "^5.11.96",
     "@types/node": "18.16.9",
     "@typescript-eslint/utils": "^8.19.0",
     "angular-eslint": "^19.0.2",
