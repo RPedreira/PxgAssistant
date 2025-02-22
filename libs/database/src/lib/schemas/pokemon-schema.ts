@@ -65,6 +65,12 @@ const schema = new Schema<PokemonInterface>({
         enum: pokemonTypes,
         default: []
     },
+    superResistance: {
+        type: [String],
+        required: true,
+        enum: pokemonTypes,
+        default: []
+    },
     immunity: {
         type: [String],
         required: true,

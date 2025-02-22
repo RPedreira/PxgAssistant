@@ -28,5 +28,6 @@ export interface PokemonInterface {
     weakness: PokemonType[]
     neutral: PokemonType[]
     resistance: PokemonType[]
+    superResistance: PokemonType[]
     immunity: PokemonType[]
 }
