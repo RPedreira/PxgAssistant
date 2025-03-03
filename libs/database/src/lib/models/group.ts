@@ -7,11 +7,16 @@ class Group {
         return mongoose.model('groups', groupSchema)
     }
 
-    static async find(
-        filter: Record<string, unknown>
-    ): Promise<GroupInterface[] | null> {
+    static async find(): Promise<GroupInterface[] | null> {
         const GroupModel = this.getModel()
-        return GroupModel.find(filter).lean<GroupInterface[]>()
+        return GroupModel.find().lean<GroupInterface[]>()
+    }
+
+    static async findOne(
+        filter: Record<string, unknown>
+    ): Promise<GroupInterface | null> {
+        const GroupModel = this.getModel()
+        return GroupModel.find(filter).lean<GroupInterface>()
     }
 
     static async findOneAndUpdate(

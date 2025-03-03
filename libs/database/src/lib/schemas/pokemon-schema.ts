@@ -23,6 +23,19 @@ const pokemonTypes = [
     'CRYSTAL'
 ]
 
+const clanNames = [
+    'RAIBOLT',
+    'SEAVELL',
+    'VOLCANIC',
+    'OREBOUND',
+    'NATURIA',
+    'GARDESTRIKE',
+    'IRONHARD',
+    'WINGEON',
+    'PSYCRAFT',
+    'MALEFIC'
+]
+
 const schema = new Schema<PokemonInterface>({
     pokedexNumber: {
         type: String,
@@ -36,6 +49,12 @@ const schema = new Schema<PokemonInterface>({
         type: Boolean,
         required: true,
         default: false
+    },
+    joeyQuestClans: {
+        type: [String],
+        required: true,
+        enum: clanNames,
+        default: []
     },
     type: {
         type: [String],

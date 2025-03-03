@@ -23,6 +23,7 @@ export interface PokemonInterface {
     pokedexNumber: string
     name: string
     caught: boolean
+    joeyQuestClans: string[]
     type: PokemonType[]
     superWeakness: PokemonType[]
     weakness: PokemonType[]
