@@ -6,12 +6,13 @@ import {
 } from 'fastify'
 
 import { PokedexController } from './controllers/pokedex-controller'
+import { JoeyQuestController } from './controllers/joey-quest-controller'
 
 export async function routes(
     fastify: FastifyInstance,
     options: FastifyPluginOptions
 ) {
     fastify.get('/', async (request: FastifyRequest, reply: FastifyReply) => {
-        return PokedexController.getAllPokemons(request, reply)
+        return PokedexController.getAllPokemons()
     })
 }
