@@ -1,6 +1,9 @@
 import { connect } from './connection/connection'
 import { Pokemon, Group } from './models'
 import { PokemonInterface, GroupInterface } from './interfaces'
+import { config } from 'dotenv'
+
+config({ path: '.env' })
 
 connect()
 
