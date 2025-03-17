@@ -101,6 +101,7 @@ const schema = new Schema<PokemonInterface>({
 schema.index({ name: 1 })
 schema.index({ caught: 1 })
 schema.index({ type: 1 })
+schema.index({ joeyQuestClans: 1 })
 schema.index({ type: 1, name: 1 })
 schema.index({ type: 1, caught: 1 })
 
