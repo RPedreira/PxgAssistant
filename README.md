@@ -1,82 +1,73 @@
-# PxgAssistant
+# PXG Assistant
 
-<a alt="Nx logo" href="https://nx.dev" target="_blank" rel="noreferrer"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png" width="45"></a>
+Pokedex e acompanhamento da **Joey Quest** do PokeXGames.
 
-✨ Your new, shiny [Nx workspace](https://nx.dev) is almost ready ✨.
+-   **Joey Quest**: uma tela só com os 10 clãs, o progresso de cada um e o filtro _Todos / Faltam / Capturados_. Também filtra por dificuldade, tipo e nome. Pokémons que aparecem em mais de um clã (ex.: Dwebble em Naturia e Orebound) aparecem uma única vez e contam para todos os clãs dele.
+-   **Pokedex**: todos os pokémons, com filtros por tipo e capturados, mais o **filtro de combate**: "fraco contra" ou "resiste a" vários tipos, combinados com **E** (todos ao mesmo tempo, para hunts em dupla, ex.: fraco contra Planta E Fantasma) ou **OU** (pelo menos um, ex.: fraco contra Planta OU Inseto). Os pokémons da Joey Quest têm um trevo no canto do card (clã e dificuldade ficam só na tela da quest). Clicar num pokémon abre a tabela completa de efetividade.
+-   **Versões alternativas**: 413 versões vindas da wiki do PXG, cada uma com tipos, fraquezas e miniatura próprias: 227 shiny, 25 regionais (Alolan Marowak), 38 especiais (Big Onix, Crystal Onix, Rotom Fire…), 61 megas e 62 TM/TR. Elas aparecem logo depois da forma base, com um selo no card (✦ shiny, M mega, TM/TR). O detalhe tem a faixa "Outras versões" para alternar entre elas, e o filtro **Versão** separa normais, alternativas ou um tipo de versão. Megas e TM/TR são forjados: aparecem na Pokedex, mas não podem ser marcados como capturados. Shinies e outras versões não contam para a Joey Quest.
+-   Marcar uma captura (o círculo no canto do card) vale para as duas telas. O progresso atualiza na hora e dá para desfazer pelo aviso.
+-   Os filtros ficam na URL, então dá para salvar um favorito como `/joey-quest?clan=NATURIA`.
 
-[Learn more about this workspace setup and its capabilities](https://nx.dev/getting-started/tutorials/angular-monorepo-tutorial?utm_source=nx_project&amp;utm_medium=readme&amp;utm_campaign=nx_projects) or run `npx nx graph` to visually explore what was created. Now, let's get you up to speed!
+## Estrutura
 
-## Finish your remote caching setup
+| Pasta           | O que é                                                                                  |
+| --------------- | ---------------------------------------------------------------------------------------- |
+| `apps/backend`  | API Fastify (porta 8200), rotas em `/api`                                                |
+| `apps/frontend` | Angular 19 (porta 4200), com proxy de `/api` para o backend                              |
+| `libs/shared`   | Tipos (contrato front/back), lista oficial da Joey Quest, filtros e cálculo de progresso |
+| `libs/database` | Conexão, schemas e models do Mongoose                                                    |
+| `apps/desktop`  | App desktop (Electron) que empacota backend + frontend num .exe                          |
+| `tools/scripts` | Seed do banco e importação de sprites                                                    |
 
-[Click here to finish setting up your workspace!](https://cloud.nx.app/connect/won5EHoNte)
+## Como rodar
 
+Pré-requisitos: Node 18+ e MongoDB local. Crie um arquivo `.env` na raiz:
 
-## Run tasks
-
-To run the dev server for your app, use:
-
-```sh
-npx nx serve frontend
+```
+MONGODB_URI=mongodb://localhost:27017/PokeXGames
 ```
 
-To create a production bundle:
-
 ```sh
-npx nx build frontend
+npm install
+npm run db:seed   # aplica a Joey Quest, os dados da wiki e os índices (idempotente, não mexe nas capturas)
+npm run dev       # backend + frontend -> http://localhost:4200
 ```
 
-To see all available targets to run for a project, run:
+Outros comandos:
 
 ```sh
-npx nx show project frontend
+npm test                                   # testes de shared, backend e frontend
+npm run build                              # build de produção
+npm run sprites:import -- "C:/pasta/Icons" # (re)importa sprites para apps/frontend/public/sprites
+npm run wiki:import                        # relê a wiki do PXG (tools/data/pxg-wiki.json + relatório); depois rode db:seed
 ```
 
-These targets are either [inferred automatically](https://nx.dev/concepts/inferred-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) or defined in the `project.json` or `package.json` files.
-
-[More about running tasks in the docs &raquo;](https://nx.dev/features/run-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Add new projects
-
-While you could add new projects to your workspace manually, you might want to leverage [Nx plugins](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) and their [code generation](https://nx.dev/features/generate-code?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) feature.
-
-Use the plugin's generator to create new projects.
-
-To generate a new application, use:
+## App desktop (.exe)
 
 ```sh
-npx nx g @nx/angular:app demo
+npm run desktop:dist   # gera dist/desktop/PXG Assistant Setup 1.0.0.exe
+npm run desktop        # abre o app desktop sem gerar o instalador
 ```
 
-To generate a new library, use:
+O instalador cria atalhos na Área de Trabalho e no Menu Iniciar. O app sobe a API e as telas dentro do próprio Electron, numa porta local livre. Não é preciso ter o Node instalado nem rodar `npm run dev`.
 
-```sh
-npx nx g @nx/angular:lib mylib
-```
+-   **MongoDB**: precisa estar rodando. O endereço padrão é `mongodb://127.0.0.1:27017/PokeXGames`. Para mudar, edite `%APPDATA%\PXG Assistant\config.json`, que é criado na primeira execução. Se não conseguir conectar, o app mostra um aviso com o caminho desse arquivo.
+-   **Ícone**: `apps/desktop/assets/icon.ico`, gerado do sprite do trevo com `npm run desktop:icon` (precisa de Python com Pillow).
+-   **Estrutura**: `apps/desktop/src/main.ts` é o processo do Electron. O servidor vem de `apps/backend/src/server.ts`. `tools/desktop/build.mjs` junta tudo em `dist/apps/desktop`.
 
-You can use `npx nx list` to get a list of installed plugins. Then, run `npx nx list <plugin-name>` to learn about more specific capabilities of a particular plugin. Alternatively, [install Nx Console](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) to browse plugins and generators in your IDE.
+## API
 
-[Learn more about Nx plugins &raquo;](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) | [Browse the plugin registry &raquo;](https://nx.dev/plugin-registry?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+| Método | Rota                    | Descrição                                                                                                                                                                                        |
+| ------ | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| GET    | `/api/pokemons`         | Lista. Filtros opcionais: `search`, `types=FIRE,FLYING`, `weakTo=GRASS,GHOST` ou `resists=...` (um dos dois), `match=and\|or` (padrão `and`), `caught`, `joeyQuest`, `clan`, `sort=number\|name` |
+| GET    | `/api/pokemons/:name`   | Detalhe                                                                                                                                                                                          |
+| PATCH  | `/api/pokemons/:name`   | `{ "caught": true }` marca ou desmarca a captura                                                                                                                                                 |
+| GET    | `/api/joey-quest`       | Clãs com progresso, recompensas e pokémons                                                                                                                                                       |
+| GET    | `/api/joey-quest/:clan` | Um clã                                                                                                                                                                                           |
 
+## Dados
 
-[Learn more about Nx on CI](https://nx.dev/ci/intro/ci-with-nx#ready-get-started-with-your-provider?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Install Nx Console
-
-Nx Console is an editor extension that enriches your developer experience. It lets you run tasks, generate code, and improves code autocompletion in your IDE. It is available for VSCode and IntelliJ.
-
-[Install Nx Console &raquo;](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Useful links
-
-Learn more:
-
-- [Learn more about this workspace setup](https://nx.dev/getting-started/tutorials/angular-monorepo-tutorial?utm_source=nx_project&amp;utm_medium=readme&amp;utm_campaign=nx_projects)
-- [Learn about Nx on CI](https://nx.dev/ci/intro/ci-with-nx?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Releasing Packages with Nx release](https://nx.dev/features/manage-releases?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [What are Nx plugins?](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-And join the Nx community:
-- [Discord](https://go.nx.dev/community)
-- [Follow us on X](https://twitter.com/nxdevtools) or [LinkedIn](https://www.linkedin.com/company/nrwl)
-- [Our Youtube channel](https://www.youtube.com/@nxdevtools)
-- [Our blog](https://nx.dev/blog?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+-   `pokemons`: o campo `caught` é a **única** fonte da verdade do progresso. "Clã completo" é sempre calculado a partir dele.
+-   `joeyquests`: um documento por clã (ovo, essência, ordem).
+-   **Wiki do PXG** (`npm run wiki:import`): o importador lê `wiki.pokexgames.com` pela API, só leitura e com pausas entre as requisições. Ele grava `tools/data/pxg-wiki.json`, as miniaturas e o relatório `tools/data/pxg-wiki-report.md`, mas não mexe no banco: é o `db:seed` que aplica. A wiki é a fonte dos tipos e das efetividades, com uma exceção: páginas que contradizem muito a tabela de tipos oficial (erros de copiar e colar da wiki, como Spinarak com a efetividade do Bulbasaur) mantêm o valor do banco, e isso fica registrado no relatório.
+-   Para alterar a lista da quest, edite `libs/shared/src/lib/joey-quest-data.ts` e rode `npm run db:seed`. A lista atual foi conferida com o NPC Joey dentro do jogo.

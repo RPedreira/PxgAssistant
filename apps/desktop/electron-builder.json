@@ -1,0 +1,29 @@
+{
+    "$schema": "https://raw.githubusercontent.com/electron-userland/electron-builder/master/packages/app-builder-lib/scheme.json",
+    "appId": "com.rafael.pxgassistant",
+    "productName": "PXG Assistant",
+    "copyright": "Copyright © Rafael",
+    "directories": {
+        "app": "dist/apps/desktop",
+        "output": "dist/desktop",
+        "buildResources": "apps/desktop/assets"
+    },
+    "files": ["**/*", "!node_modules/**"],
+    "npmRebuild": false,
+    "afterPack": "./apps/desktop/after-pack.cjs",
+    "win": {
+        "icon": "apps/desktop/assets/icon.ico",
+        "signAndEditExecutable": false,
+        "target": [{ "target": "nsis", "arch": ["x64"] }]
+    },
+    "nsis": {
+        "oneClick": false,
+        "allowToChangeInstallationDirectory": true,
+        "createDesktopShortcut": true,
+        "createStartMenuShortcut": true,
+        "shortcutName": "PXG Assistant",
+        "installerIcon": "apps/desktop/assets/icon.ico",
+        "uninstallerIcon": "apps/desktop/assets/icon.ico",
+        "artifactName": "PXG Assistant Setup ${version}.${ext}"
+    }
+}
