@@ -1,4 +1,4 @@
-import groupSchema from './groups-schema'
+import clanSchema from './clan-schema'
 import pokemonSchema from './pokemon-schema'
 
-export { groupSchema, pokemonSchema }
+export { clanSchema, pokemonSchema }

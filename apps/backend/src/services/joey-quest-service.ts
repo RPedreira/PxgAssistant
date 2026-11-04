@@ -1,41 +1,23 @@
-import { Group, GroupInterface, Types } from '@internal/database'
-import { PokedexService } from './pokedex-service'
-import { getJoeyQuestGroupResponse } from '../interfaces'
+import { Clan, ClanInterface } from '@internal/database'
+import {
+    ClanName,
+    ClanProgressDto,
+    JoeyQuestSummaryDto,
+    buildJoeyQuestSummary
+} from '@internal/shared'
+import { PokemonService } from './pokemon-service'
 
-class JoeyQuestService {
-    static async getJoeyQuestGroups(): Promise<GroupInterface[]> {
-        return Group.find()
-    }
+export const JoeyQuestService = {
+    async summary(): Promise<JoeyQuestSummaryDto> {
+        const [clans, pokemons] = await Promise.all([
+            Clan.find({}, { _id: 0, __v: 0 }).lean<ClanInterface[]>(),
+            PokemonService.list({ joeyQuest: true })
+        ])
+        return buildJoeyQuestSummary(clans, pokemons)
+    },
 
-    static async getJoeyQuestGroup(
-        clanName: string,
-        pokemons: Types.ObjectId[],
-        completed: boolean
-    ): Promise<getJoeyQuestGroupResponse> {
-        const pokemonsDocs = await PokedexService.getPokemons({
-            _id: { $in: pokemons }
-        })
-        return { clanName, pokemons: pokemonsDocs, completed }
-    }
-
-    static async updatePokemonGroups(joeyQuestClans: string[]): Promise<void> {
-        for (const clan of joeyQuestClans) {
-            const clanDoc = await Group.findOne({ name: clan })
-            const pokemons = await PokedexService.getPokemons({
-                _id: { $in: clanDoc.pokemons }
-            })
-            const allCaught = pokemons.every(pokemon => pokemon.caught)
-
-            if (allCaught) {
-                await Group.findOneAndUpdate(
-                    { clanName: clan },
-                    { completed: true }
-                )
-            }
-
-            return
-        }
+    async clan(name: ClanName): Promise<ClanProgressDto | null> {
+        const summary = await this.summary()
+        return summary.clans.find(c => c.name === name) ?? null
     }
 }
-
-export { JoeyQuestService }

@@ -1,10 +1,16 @@
-import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
-import { provideRouter } from '@angular/router';
-import { appRoutes } from './app.routes';
+import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core'
+import { provideRouter, withInMemoryScrolling } from '@angular/router'
+import { provideHttpClient, withFetch } from '@angular/common/http'
+
+import { appRoutes } from './app.routes'
 
 export const appConfig: ApplicationConfig = {
-  providers: [
-    provideZoneChangeDetection({ eventCoalescing: true }),
-    provideRouter(appRoutes),
-  ],
-};
+    providers: [
+        provideZoneChangeDetection({ eventCoalescing: true }),
+        provideRouter(
+            appRoutes,
+            withInMemoryScrolling({ scrollPositionRestoration: 'top' })
+        ),
+        provideHttpClient(withFetch())
+    ]
+}

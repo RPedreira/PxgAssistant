@@ -1,29 +1,19 @@
-type PokemonType =
-    | 'NORMAL'
-    | 'FIRE'
-    | 'WATER'
-    | 'GRASS'
-    | 'ELECTRIC'
-    | 'ICE'
-    | 'FIGHTING'
-    | 'POISON'
-    | 'GROUND'
-    | 'FLYING'
-    | 'PSYCHIC'
-    | 'BUG'
-    | 'ROCK'
-    | 'GHOST'
-    | 'DARK'
-    | 'DRAGON'
-    | 'STEEL'
-    | 'FAIRY'
-    | 'CRYSTAL'
+import {
+    ClanName,
+    Difficulty,
+    PokemonType,
+    PokemonVariant
+} from '@internal/shared'
 
 export interface PokemonInterface {
+    number: number
     pokedexNumber: string
     name: string
     caught: boolean
-    joeyQuestClans: string[]
+    joeyQuestClans: ClanName[]
+    joeyQuestDifficulty: Difficulty | null
+    variant: PokemonVariant | null
+    baseName: string | null
     type: PokemonType[]
     superWeakness: PokemonType[]
     weakness: PokemonType[]

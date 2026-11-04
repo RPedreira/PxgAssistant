@@ -1,4 +1,2 @@
-import { PokemonInterface } from './pokemon-interface'
-import { GroupInterface } from './group-interface'
-
-export { PokemonInterface, GroupInterface }
+export type { PokemonInterface } from './pokemon-interface'
+export type { ClanInterface } from './clan-interface'

@@ -1,18 +1,13 @@
-import Fastify from 'fastify'
-import cors from '@fastify/cors'
-import { routes } from './routes'
+import { connect } from '@internal/database'
+import { buildApp } from './app'
 
-const app = Fastify({ logger: true })
+const PORT = Number(process.env['PORT'] ?? 8200)
 
-app.errorHandler = (error, request, reply) => {
-    reply.code(400).send({ error: error.message })
-}
-
-const start = async () => {
-    await app.register(cors)
-    await app.register(routes)
+async function start() {
+    const app = await buildApp({ logger: true })
     try {
-        await app.listen({ port: 8200 })
+        await connect()
+        await app.listen({ port: PORT })
     } catch (err) {
         app.log.error(err)
         process.exit(1)

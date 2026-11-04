@@ -1,108 +1,55 @@
 import { Schema } from 'mongoose'
+import {
+    CLAN_NAMES,
+    DIFFICULTIES,
+    POKEMON_TYPES,
+    POKEMON_VARIANTS
+} from '@internal/shared'
 import { PokemonInterface } from '../interfaces'
 
-const pokemonTypes = [
-    'NORMAL',
-    'FIRE',
-    'WATER',
-    'GRASS',
-    'ELECTRIC',
-    'ICE',
-    'FIGHTING',
-    'POISON',
-    'GROUND',
-    'FLYING',
-    'PSYCHIC',
-    'BUG',
-    'ROCK',
-    'GHOST',
-    'DARK',
-    'DRAGON',
-    'STEEL',
-    'FAIRY',
-    'CRYSTAL'
-]
-
-const clanNames = [
-    'RAIBOLT',
-    'SEAVELL',
-    'VOLCANIC',
-    'OREBOUND',
-    'NATURIA',
-    'GARDESTRIKE',
-    'IRONHARD',
-    'WINGEON',
-    'PSYCRAFT',
-    'MALEFIC'
-]
+const typeList = {
+    type: [{ type: String, enum: POKEMON_TYPES }],
+    required: true,
+    default: []
+}
 
 const schema = new Schema<PokemonInterface>({
-    pokedexNumber: {
-        type: String,
-        required: true
-    },
-    name: {
-        type: String,
-        required: true
-    },
-    caught: {
-        type: Boolean,
-        required: true,
-        default: false
-    },
+    number: { type: Number, required: true },
+    pokedexNumber: { type: String, required: true },
+    name: { type: String, required: true, unique: true },
+    caught: { type: Boolean, required: true, default: false },
     joeyQuestClans: {
-        type: [String],
+        type: [{ type: String, enum: CLAN_NAMES }],
         required: true,
-        enum: clanNames,
         default: []
     },
-    type: {
-        type: [String],
-        required: true
+    joeyQuestDifficulty: {
+        type: String,
+        enum: [...DIFFICULTIES, null],
+        default: null
     },
-    superWeakness: {
-        type: [String],
-        required: true,
-        enum: pokemonTypes,
-        default: []
+    /** Forma base (null) ou versão alternativa (shiny, regional...). */
+    variant: {
+        type: String,
+        enum: [...POKEMON_VARIANTS, null],
+        default: null
     },
-    weakness: {
-        type: [String],
-        required: true,
-        enum: pokemonTypes,
-        default: []
-    },
-    neutral: {
-        type: [String],
-        required: true,
-        enum: pokemonTypes,
-        default: []
-    },
-    resistance: {
-        type: [String],
-        required: true,
-        enum: pokemonTypes,
-        default: []
-    },
-    superResistance: {
-        type: [String],
-        required: true,
-        enum: pokemonTypes,
-        default: []
-    },
-    immunity: {
-        type: [String],
-        required: true,
-        enum: pokemonTypes,
-        default: []
-    }
+    /** Nas versões alternativas, o nome da forma base. */
+    baseName: { type: String, default: null },
+    type: typeList,
+    superWeakness: typeList,
+    weakness: typeList,
+    neutral: typeList,
+    resistance: typeList,
+    superResistance: typeList,
+    immunity: typeList
 })
 
-schema.index({ name: 1 })
+schema.index({ number: 1 })
 schema.index({ caught: 1 })
 schema.index({ type: 1 })
 schema.index({ joeyQuestClans: 1 })
-schema.index({ type: 1, name: 1 })
-schema.index({ type: 1, caught: 1 })
+schema.index({ baseName: 1 })
+schema.index({ variant: 1 })
 
 export default schema
