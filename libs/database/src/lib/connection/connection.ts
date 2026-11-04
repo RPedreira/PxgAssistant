@@ -1,12 +1,20 @@
-import mongoose from 'mongoose'
+import mongoose, { ConnectOptions } from 'mongoose'
+import { config } from 'dotenv'
 
-const { MONGODB_URI } = process.env
+config({ path: '.env' })
 
-const connect = async () => {
-    if (!MONGODB_URI) {
-        throw new Error('MongoDB URI is not defined in environment variables')
+export async function connect(
+    uri = process.env['MONGODB_URI'],
+    options?: ConnectOptions
+) {
+    if (!uri) {
+        throw new Error(
+            'MONGODB_URI não definida (crie um arquivo .env na raiz)'
+        )
     }
-    await mongoose.connect(MONGODB_URI)
+    await mongoose.connect(uri, options)
 }
 
-export { connect }
+export async function disconnect() {
+    await mongoose.disconnect()
+}
